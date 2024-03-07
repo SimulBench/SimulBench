@@ -1,0 +1,15 @@
+{
+    "002#Linux_Terminal":{"request_type":"your Linux command, such as cd, mkdir, cat, etc."}, 
+    "005#JavaScript_Console":{"strategy_type":"A more difficult piece of codes with more than 5 lines, including different operations and functions.", "request_type":"your JavaScript codes"}, 
+    "023#Relationship_Coach":{"strategy_type":"[response to the AI's question or continue with the previous requests about relationships]", "request_type":"your response or instruction"},
+    "061#AI_Trying_to_Escape_the_Box":{"strategy_type":"Answer the AI's request.", "request_type":"you must provide the corresponding terminal output inside a code block delimited by triple back-tics within 300 tokens"},
+    "066#SQL_terminal":{"request_type":"your SQL command"}, 
+    "101#Python_interpreter":{"strategy_type":"A more difficult piece of codes with more than 5 lines, including different operations and functions.", "request_type":"your Python codes"}, 
+    "102#Synonym_finder":{"request_type":"your word"},
+    "113#Chess_Player":{"request_type":"your next move"},
+    "121#R_programming_Interpreter":{"strategy_type":"A piece of codes with more than 5 lines, including different operations and functions.", "request_type":"your R codes only"}, 
+    "124#PHP_Interpreter":{"strategy_type":"A more difficult piece of codes with more than 5 lines, including different operations and functions.", "request_type":"your PHP codes"}, 
+    "152#Gomoku_player":{"request_type":"your next move"},
+    "158#Python_Interpreter":{"strategy_type":"A more difficult piece of codes with more than 5 lines, including different operations and functions.", "request_type":"your Python codes"},
+    "161#Japanese_Kanji_quiz_machine":{"strategy_type":"Answer the AI's question.","request_type":"your must provide the answer to the quiz"}
+}
