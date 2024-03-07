@@ -55,7 +55,7 @@ export API_KEY=your_openai_key
 bash chat_multi.sh
 ```
 
-Dialogues collected in this work can be downloaded from this [url](https://drive.google.com/file/d/1MQkEJNBPGOCZF7Gfe1kR3CHvfiUKQ7pk/view?usp=drive_link).
+Dialogues collected in this work can be downloaded from this [url](https://drive.google.com/file/d/1npV_URnf0rGnhV8Duvbu744ROseGtlgC/view?usp=sharing).
 
 
 ## GPT-4 as Judge for Scoring or Comparing
