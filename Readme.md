@@ -70,7 +70,7 @@ If you find that our paper or code useful, please cite the paper as follows:
 ```latex
 @article{jia2024simulbench,
       title={SimulBench: Evaluating LLMs with Diverse Simulation Tasks}, 
-      author={Qi Jia, Tianyu Zheng, Xiang Yue, Jie Huang, and Bill Yuchen Lin},
+      author={Qi Jia, Xiang Yue, Tianyu Zheng, Jie Huang, and Bill Yuchen Lin},
       year={2024},
       eprint={},
       archivePrefix={arXiv},
