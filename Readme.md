@@ -68,7 +68,7 @@ bash judger.sh
 # Citation
 If you find that our paper or code useful, please cite the paper as follows:
 ```latex
-@article{jia2024simulbench,
+@article{simulbench2024,
       title={SimulBench: Evaluating LLMs with Diverse Simulation Tasks}, 
       author={Qi Jia, Xiang Yue, Tianyu Zheng, Jie Huang, and Bill Yuchen Lin},
       year={2024},
