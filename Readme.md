@@ -18,6 +18,7 @@ We introduce **SimulBench**, a benchmark designed to evaluate large language mod
 * [transformers](https://github.com/huggingface/transformers)
 * [fschat](https://github.com/lm-sys/FastChat)
 * [openai](https://github.com/openai/openai-python)
+* [datasets](https://github.com/huggingface/datasets)
 
 
 ## Code Structure
@@ -66,12 +67,12 @@ bash judger.sh
 ## Scores for different models on SimulBench subsets
 To calculate the micro-average scores for different models on a simulbench subset, you can either load the outputs from the local directory:
 ```shell
-python3 src/score_calculator.py --data_source local --output_dir ./output --subset hard
+python3 src/score_calculator.py --data_source local_dir --output_dir ./output --subset hard
 ```
 
 or load the outputs from huggingface/datasets:
 ```shell
-python3 src/score_calculator.py --data_source hf --subset hard
+python3 src/score_calculator.py --data_source hf_data --subset hard
 ```
 
 Dialogues collected in this work can be downloaded from this [url](https://drive.google.com/file/d/1ZB_bX6sodBP4sn2f2hsHsWfloRk0fDti/view?usp=sharing) or see [huggingface/datasets](https://huggingface.co/datasets/SimulBench/SimulBench).

@@ -89,7 +89,7 @@ def main(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="simulation score")
-    parser.add_argument("--data_source", type=str, default="local", help="local or hf")
+    parser.add_argument("--data_source", type=str, default="local_dir", help="local_dir or hf_data")
     parser.add_argument("--output_dir", type=str, default="./output", help="output directory")
     parser.add_argument("--subset", type=str, default="all",
                         help="all, hard, objective, subjective, tool, system, role")
