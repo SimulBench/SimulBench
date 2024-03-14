@@ -1,4 +1,4 @@
-person_list = [
+role_list = [
         "000#An_Ethereum_Developer",
         "004#`position`_Interviewer",
         "008#Spoken_English_Teacher_and_Improver",
@@ -109,7 +109,7 @@ person_list = [
         "166#Data_Scientist",
         "167#League_of_Legends_Player"
     ]
-system_list = [ # 特定命令输入
+system_list = [
         "002#Linux_Terminal",
         "005#JavaScript_Console",
         "006#Excel_Sheet",
