@@ -4,7 +4,7 @@
 Prompts for user agent
 '''
 
-USER_PROMPT = """Please act as a user to generate requests given the dialogue history with an AI for a given task. The task is defined in the user's first utterance. The requests should be diverse and complicated enough, and are executable commands, instructions applicable to the given task.
+USER_PROMPT = """Please act as a user to generate requests given the dialogue history with an AI for a given task. The task is defined in the user's first utterance. The requests should be diverse and complicated enough, and are executable commands or instructions applicable to the given task.
 
 ## Dialogue History
 {DIALOGUE}

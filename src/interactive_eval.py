@@ -50,6 +50,7 @@ def conversation_generation(
         user_model=None,
         filtered_path=None,
         filter_flag=None,
+        subset=None,
         user_temperature=0.0,
         user_max_tokens=500,
         character_temperature=0.0,
@@ -58,7 +59,7 @@ def conversation_generation(
 ):
     print(user_max_tokens, character_max_tokens)
 
-    test_samples = load_test_cases(test_file_path)
+    test_samples = load_test_cases(test_file_path, subset=subset)
     test_config = json.load(open(test_config_file_path, "r"))
 
     if filtered_path != None:
@@ -72,7 +73,10 @@ def conversation_generation(
 
     for i, sample in tqdm(enumerate(test_samples), desc="Character"):
 
-        id = str(i).zfill(3) + "#" + sample["act"].replace("/", "-").replace(" ", "_")
+        if subset==None:
+            id = str(i).zfill(3) + "#" + sample["act"].replace("/", "-").replace(" ", "_")
+        else:
+            id = sample["id"]
 
         if filtered_path != None:
             if filter_flag == "keep" and id not in filtered_samples:
@@ -205,7 +209,7 @@ def conversation_generation(
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="persona chat evaluation")
+    parser = argparse.ArgumentParser(description="simulation conversation collection")
     parser.add_argument("--character_api_key", type=str, default="", help="OpenAI API_KEY")
     parser.add_argument("--character_model", type=str, default="Llama-2-70b-chat-hf", help="The path to an LLM playing the role of a simulator")
     parser.add_argument("--character_template_name", type=str, default="llama-2", help="The chat template to be used for open LLMs. See FastChat.conversation for more details.")
@@ -221,6 +225,7 @@ if __name__ == '__main__':
     parser.add_argument("--filtered_path", type=str, default=None, help="a specific group of sample ids")
     parser.add_argument("--filter_flag", type=str, default=None, help="keep or remove the ids in filtered_path")
     parser.add_argument("--test_file_path", type=str, default="../data/prompts.csv", help="simulation tasks")
+    parser.add_argument("--subset", type=str, default=None, help="if test_file_path is SimulBench/SimulBench, subset should be one of [all, hard, objective, subjective, system, tool, role], else None.")
     parser.add_argument("--test_config_file_path", type=str, default="./data/task_specific_config.json", help="path to the task specific configurations for the user agent")
     parser.add_argument("--output_dir", type=str, default="./output", help="output directory")
     parser.add_argument("--turn_num", type=int, default=4, help="the number of turns to be collected")
@@ -254,6 +259,7 @@ if __name__ == '__main__':
         filtered_path=args.filtered_path,
         filter_flag=args.filter_flag,
         test_file_path=args.test_file_path,
+        subset=args.subset,
         test_config_file_path=args.test_config_file_path,
         output_dir=args.output_dir,
         turn_num=args.turn_num

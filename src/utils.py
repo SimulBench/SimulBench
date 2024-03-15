@@ -1,7 +1,8 @@
 # encoding = utf-8
 import csv
 import json
-import tiktoken
+# import tiktoken
+from datasets import load_dataset
 
 
 def convert_dialogue_list_to_string(dialogue_list, role_dict):
@@ -39,17 +40,21 @@ class Color:
         print(f"{getattr(Color, color.upper())}{content}{Color.RESET}")
 
 
-def load_test_cases(file_path):
-    samples = []
-    with open(file_path, 'r') as file:
-        file.readline()
-        for line in file:
-            line = line.strip().split(",", 1)
-            samples.append({"act": str(line[0][1:-1]), "prompt": str(line[1][1:-1])})
-        # csv_reader = csv.DictReader(file, delimiter=',')
-        # samples = [row for row in csv_reader]
-        # print(samples[-1])
-    # exit(0)
+def load_test_cases(file_path, subset=None):
+    if subset==None:
+        samples = []
+        with open(file_path, 'r') as file:
+            file.readline()
+            for line in file:
+                line = line.strip().split(",", 1)
+                samples.append({"act": str(line[0][1:-1]), "prompt": str(line[1][1:-1])})
+            # csv_reader = csv.DictReader(file, delimiter=',')
+            # samples = [row for row in csv_reader]
+            # print(samples[-1])
+        # exit(0)
+    else:
+        samples = load_dataset(file_path, subset, split="test")
+
     return samples
 
 

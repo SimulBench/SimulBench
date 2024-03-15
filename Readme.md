@@ -49,6 +49,13 @@ All of the simulation tasks sourced from [Awesome ChatGPT Prompts](https://githu
 
 We manually classified the tasks into different categories with the corresponding lists in [obj-subj.py](./data/obj-subj.py) and [system-tool-role.py](./data/system-tool-role.py).
 
+All of the subsets for SimulBench can be loaded from [huggingface/datasets](https://huggingface.co/datasets/SimulBench/SimulBench) as follows:
+```python
+from dataset import load_dataset
+
+all_tasks = load_dataset("SimulBench/SimulBench", "all", split="test")
+```
+Other available subsets are: `hard`, `subjective`, `objective`, `system`, `tool`, `role`.
 
 ## LLM inferences on SimulBench
 To collect dialogues between a testing model(character model) and the user agent, run
@@ -75,7 +82,7 @@ or load the outputs from huggingface/datasets:
 python3 src/score_calculator.py --data_source hf_data --subset hard
 ```
 
-Dialogues collected in this work can be downloaded from this [url](https://drive.google.com/file/d/1ZB_bX6sodBP4sn2f2hsHsWfloRk0fDti/view?usp=sharing) or see [huggingface/datasets](https://huggingface.co/datasets/SimulBench/SimulBench).
+Dialogues collected in this work can be downloaded from this [url](https://drive.google.com/file/d/1ZB_bX6sodBP4sn2f2hsHsWfloRk0fDti/view?usp=sharing) or see [huggingface/datasets](https://huggingface.co/datasets/SimulBench/SimulBench-results).
 
 
 # Citation
