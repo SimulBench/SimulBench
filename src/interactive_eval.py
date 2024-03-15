@@ -107,7 +107,7 @@ def conversation_generation(
                 pass
         output_file = open(output_file_path, "w", encoding="utf-8")
 
-        first_user_utterance = sample["prompt"]
+        first_user_utterance = sample["task_description"]
         print(first_user_utterance)
         request_type = sample_config[
             "request_type"] if "request_type" in sample_config else "your executable command or instruction"
@@ -195,7 +195,7 @@ def conversation_generation(
         dialogues = {
             "id": f"{id}",
             "act": sample["act"],
-            "prompt": first_user_utterance,
+            "task_description": first_user_utterance,
             "dialogue": dialogue,
             # "user_messages": user_messages[:],
             "character_messages": character_messages,

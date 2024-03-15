@@ -47,7 +47,7 @@ def load_test_cases(file_path, subset=None):
             file.readline()
             for line in file:
                 line = line.strip().split(",", 1)
-                samples.append({"act": str(line[0][1:-1]), "prompt": str(line[1][1:-1])})
+                samples.append({"act": str(line[0][1:-1]), "task_description": str(line[1][1:-1])})
             # csv_reader = csv.DictReader(file, delimiter=',')
             # samples = [row for row in csv_reader]
             # print(samples[-1])
