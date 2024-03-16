@@ -3,20 +3,12 @@
 </h1>
 </div>
 
-<div align="center">
-    <span class="link-block">
-        <a href="https://huggingface.co/datasets/SimulBench/SimulBench"
-                       class="external-link button is-normal is-rounded is-dark">
-              <span class="icon">
-                <p style="font-size:18px">🤗</p>
-              </span>
-              <span>Datasets</span>
-        </a>
-    </span>
-</div>
 
-[comment]: <> ([📖 Arxiv]&#40;https://xxx&#41; | [🤗 Dataset]&#40;https://huggingface.co/datasets/SimulBench/SimulBench&#41; | [🤗 Data Explorer]&#40;https://huggingface.co/spaces/SimulBench/SimulBench&#41; ｜ [🌐 Website]&#40;https://simulbench.github.io/&#41;)
+<center>
 
+[📖 Arxiv](https://xxx) | [🤗 Dataset](https://huggingface.co/datasets/SimulBench/SimulBench) | [🤗 Data Explorer](https://huggingface.co/spaces/SimulBench/SimulBench) ｜ [🌐 Website](https://simulbench.github.io/)
+
+</center>
 
 ## Abstract
 We introduce **SimulBench**, a benchmark designed to evaluate large language models (LLMs) across a diverse collection of simulation scenarios, such as acting as a Linux terminal or playing text games with users. While these simulation tasks serve as effective measures of an LLM’s general intelligence, they are seldom incorporated into existing benchmarks. A major challenge is to develop a shared evaluation environment for testing different LLMs in multi-turn interactions between users and AI. To tackle this issue, we suggest using a fixed LLM as a user agent to engage with multiple target LLMs under evaluation. To facilitate automatic assessment on SimulBench, GPT-4 is employed as the evaluator, tasked with reviewing the quality of the multi-turn dialogues between the user agent and the target LLMs. Our comprehensive experiments indicate that these simulation tasks continue to pose a significant challenge for even the most advanced open LLMs. For example, GPT-4-turbo outperforms Llama-2-70b-chat by a margin of 37.95%.
