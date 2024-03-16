@@ -5,8 +5,9 @@ python3 ./src/interactive_eval.py --character_api_key $API_KEY \
     --user_api_key $API_KEY \
     --user_model gpt-3.5-turbo \
     --user_max_tokens 300 \
-    --test_file_path "SimulBench/SimulBench" \
-    --subset "hard" \
+    --test_file_path "./data/prompts.csv" \
     --test_config_file_path "./data/task_specific_config.json" \
     --output_dir "./output" \
-    --turn_num 4
+    --turn_num 4 \
+    --filtered_path "./data/hard_subset.json" \
+    --filter_flag keep

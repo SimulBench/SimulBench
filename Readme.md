@@ -51,7 +51,7 @@ We manually classified the tasks into different categories with the correspondin
 
 All of the subsets for SimulBench can be loaded from [huggingface/datasets](https://huggingface.co/datasets/SimulBench/SimulBench) as follows:
 ```python
-from dataset import load_dataset
+from datasets import load_dataset
 
 all_tasks = load_dataset("SimulBench/SimulBench", "all", split="test")
 ```
@@ -63,6 +63,17 @@ To collect dialogues between a testing model(character model) and the user agent
 export API_KEY=your_openai_key
 bash chat_multi.sh
 ```
+The subset of SimulBench can be specified by `--subset`. 
+
+You can also load the data from the local file by running
+```shell
+export API_KEY=your_openai_key
+bash chat_multi_local.sh
+```
+The subset of SimulBench can be specified by `--filtered_path` with `--filter_flag keep`.
+
+To test your own model, please modify `--character_model` and `--character_template_name` in [chat_multi.sh](https://github.com/SimulBench/SimulBench/blob/main/chat_multi.sh). Available templates or registration for a new template please refer to [FastChat](https://github.com/lm-sys/FastChat/blob/main/fastchat/conversation.py).
+
 
 ## GPT-4 as Judge for Scoring or Comparing
 To evaluate the collected dialogues, run
