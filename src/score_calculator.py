@@ -11,7 +11,7 @@ from datasets import load_dataset
 
 
 def load_data_from_hf(subset):
-    all_data = load_dataset("SimulBench/SimulBench", subset, split="test")
+    all_data = load_dataset("SimulBench/SimulBench-results", subset, split="test")
     # samples = {}
     # for data in all_data:
     #     if data["test_model"] not in samples:

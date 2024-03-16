@@ -224,7 +224,7 @@ if __name__ == '__main__':
 
     parser.add_argument("--filtered_path", type=str, default=None, help="a specific group of sample ids")
     parser.add_argument("--filter_flag", type=str, default=None, help="keep or remove the ids in filtered_path")
-    parser.add_argument("--test_file_path", type=str, default="../data/prompts.csv", help="simulation tasks")
+    parser.add_argument("--test_file_path", type=str, default="../data/prompts.csv", help="simulation tasks, load from the local file or from huggingface/datasets by SimulBench/SimulBench")
     parser.add_argument("--subset", type=str, default=None, help="if test_file_path is SimulBench/SimulBench, subset should be one of [all, hard, objective, subjective, system, tool, role], else None.")
     parser.add_argument("--test_config_file_path", type=str, default="./data/task_specific_config.json", help="path to the task specific configurations for the user agent")
     parser.add_argument("--output_dir", type=str, default="./output", help="output directory")

@@ -82,7 +82,7 @@ or load the outputs from huggingface/datasets:
 python3 src/score_calculator.py --data_source hf_data --subset hard
 ```
 
-Dialogues collected in this work can be downloaded from this [url](https://drive.google.com/file/d/1ZB_bX6sodBP4sn2f2hsHsWfloRk0fDti/view?usp=sharing) or see [huggingface/datasets](https://huggingface.co/datasets/SimulBench/SimulBench-results).
+Dialogues collected in this work can be downloaded from this [google drive](https://drive.google.com/file/d/1ZB_bX6sodBP4sn2f2hsHsWfloRk0fDti/view?usp=sharing) or see [huggingface/datasets](https://huggingface.co/datasets/SimulBench/SimulBench-results).
 
 
 # Citation

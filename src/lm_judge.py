@@ -303,7 +303,7 @@ def model_comparison(target_model, ref_model, output_dir, judger_args, mode, fil
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="persona chat evaluation")
+    parser = argparse.ArgumentParser(description="conversation evaluation")
     parser.add_argument("--api_key", type=str, default="", help="OpenAI API_KEY")
     # parser.add_argument("--base_url", type=str, default="https://api.openai.com/v1") 
     # parser.add_argument("--model", type=str, default="gpt-4-1106-preview")
