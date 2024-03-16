@@ -4,11 +4,18 @@
 </div>
 
 
-<div style="text-align:center;">
-
-[📖 Arxiv](https://xxx) | [🤗 Dataset](https://huggingface.co/datasets/SimulBench/SimulBench) | [🤗 Data Explorer](https://huggingface.co/spaces/SimulBench/SimulBench) | [🌐 Website](https://simulbench.github.io/)
-
+<div align= "center">
+<p>
+<a href="https://xxx">📖 Arxiv</a> |
+<a href="https://huggingface.co/datasets/SimulBench/SimulBench">🤗 Dataset</a> |
+<a href="https://huggingface.co/spaces/SimulBench/SimulBench">🤗 Data Explorer</a> |
+<a href="https://simulbench.github.io/">🌐 Website</a> |
+</p>
 </div>
+
+[comment]: <> ([📖 Arxiv]&#40;https://xxx&#41; | [🤗 Dataset]&#40;https://huggingface.co/datasets/SimulBench/SimulBench&#41; | [🤗 Data Explorer]&#40;https://huggingface.co/spaces/SimulBench/SimulBench&#41; | [🌐 Website]&#40;https://simulbench.github.io/&#41;)
+
+
 
 
 ## Abstract
