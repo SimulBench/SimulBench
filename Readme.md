@@ -4,13 +4,15 @@
 </div>
 
 <div align="center">
-    <a href="https://huggingface.co/datasets/SimulBench/SimulBench"
-                   class="external-link button is-normal is-rounded is-dark">
-          <span class="icon">
-            <p style="font-size:18px">🤗</p>
-          </span>
-          <span>Datasets</span>
-    </a>
+    <span class="link-block">
+        <a href="https://huggingface.co/datasets/SimulBench/SimulBench"
+                       class="external-link button is-normal is-rounded is-dark">
+              <span class="icon">
+                <p style="font-size:18px">🤗</p>
+              </span>
+              <span>Datasets</span>
+        </a>
+    </span>
 </div>
 
 [comment]: <> ([📖 Arxiv]&#40;https://xxx&#41; | [🤗 Dataset]&#40;https://huggingface.co/datasets/SimulBench/SimulBench&#41; | [🤗 Data Explorer]&#40;https://huggingface.co/spaces/SimulBench/SimulBench&#41; ｜ [🌐 Website]&#40;https://simulbench.github.io/&#41;)
