@@ -1,20 +1,20 @@
 # encoding = utf-8
 import csv
 import json
-# import tiktoken
+import tiktoken
 from datasets import load_dataset
+from perspective import PerspectiveAPI # https://pypi.org/project/perspective/
+import time
 
-
-def convert_dialogue_list_to_string(dialogue_list, role_dict):
-    utterances = []
-    for utterance in dialogue_list:
-        if utterance != None:
-            current_role = role_dict[utterance["role"]]
-            utterances.append(current_role + f": <{current_role.lower()}>" + utterance[
-                "content"] + f"</{current_role.lower()}>")
+def make_up_dialogue(utterances):
+    # print(utterances)
+    outputs = []
+    for utt in utterances:
+        if utt["role"] == "user":
+            outputs.append({"user": utt["content"]})
         else:
-            utterances.append("...(Omitted due to space limitation.)")
-    return "\n".join(utterances)
+            outputs.append({"AI": utt["content"]})
+    return json.dumps(outputs, indent=2)
 
 
 def dict_to_str(dictionary):
@@ -41,19 +41,32 @@ class Color:
 
 
 def load_test_cases(file_path, subset=None):
-    if subset==None:
-        samples = []
-        with open(file_path, 'r') as file:
-            file.readline()
-            for line in file:
-                line = line.strip().split(",", 1)
-                samples.append({"act": str(line[0][1:-1]), "task_description": str(line[1][1:-1])})
-            # csv_reader = csv.DictReader(file, delimiter=',')
-            # samples = [row for row in csv_reader]
-            # print(samples[-1])
-        # exit(0)
-    else:
-        samples = load_dataset(file_path, subset, split="test")
+
+    # samples = []
+    # with open(file_path, "r") as f:
+    #     for line in f:
+    #         line = json.loads(line.strip())
+
+    #         if subset:
+    #             if line["type"]==subset:
+    #                 samples.append(line)
+    #         else:
+    #             samples.append(line)
+    # return samples
+
+    # if subset==None:
+    #     samples = []
+    #     with open(file_path, 'r') as file:
+    #         file.readline()
+    #         for line in file:
+    #             line = line.strip().split(",", 1)
+    #             samples.append({"act": str(line[0][1:-1]), "task_description": str(line[1][1:-1])})
+    #         # csv_reader = csv.DictReader(file, delimiter=',')
+    #         # samples = [row for row in csv_reader]
+    #         # print(samples[-1])
+    #     # exit(0)
+    # else:
+    samples = load_dataset(file_path, subset, split="test")
 
     return samples
 
@@ -65,6 +78,20 @@ def load_data(dialogue_path):
             dialogues.append(json.loads(line.strip()))
     return dialogues
 
+def check_toxicity(text, perspective_api_key):
+    p = PerspectiveAPI(perspective_api_key)
+    flag = True
+    toxicity = None
+    while flag:
+        try:
+            time.sleep(3)
+            toxicity = p.score(text, ["TOXICITY","SEVERE_TOXICITY", "IDENTITY_ATTACK", "INSULT", "PROFANITY", "THREAT"])
+            flag = False
+        except Exception as e:
+            print(e)
+            time.sleep(10)
+            continue   
+    return toxicity
 
 # https://github.com/openai/openai-cookbook/blob/main/examples/How_to_count_tokens_with_tiktoken.ipynb
 def num_tokens_from_messages(messages, model="gpt-3.5-turbo-0613"):

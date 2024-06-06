@@ -7,18 +7,45 @@ from transformers import AutoTokenizer, AutoModelForCausalLM, GenerationConfig
 import transformers
 import torch
 from fastchat.conversation import get_conv_template
+import os
+from together import Together
+import together
 
 
-def llm_generator(messages, api_key, model, base_url="https://api.openai.com/v1", max_tokens=5, temperature=1.0, ):
-    if model in ["gpt-3.5-turbo-16k", "gpt-3.5-turbo", "gpt-4-1106-preview", "gpt-4-0125-preview", "gpt-4",
-                 "gpt-4-32k"]:
+
+def llm_generator(messages, api_key, model, base_url="https://api.openai.com/v1", max_tokens=5, temperature=1.0, is_json=False):
+    
+    if model in ["Qwen/Qwen1.5-7B-Chat","mistralai/Mistral-7B-Instruct-v0.3", "google/gemma-7b-it","Qwen/Qwen1.5-110B-Chat","mistralai/Mixtral-8x22B-Instruct-v0.1","meta-llama/Llama-3-8b-chat-hf","meta-llama/Llama-3-70b-chat-hf","meta-llama/Llama-2-7b-chat-hf", "meta-llama/Llama-2-13b-chat-hf", "meta-llama/Llama-2-70b-chat-hf", "mistralai/Mixtral-8x7B-Instruct-v0.1"]:
+
+        client = Together(api_key=os.environ.get("TOGETHER_API_KEY"))
+        try:
+            response = client.chat.completions.create(
+                model=model,
+                messages=messages,
+                temperature=temperature,
+                max_tokens=max_tokens
+            )
+        except together.error.InvalidRequestError:
+            response = client.chat.completions.create(
+                model=model,
+                messages=messages,
+                temperature=temperature,
+                # max_tokens=max_tokens
+            )
+        # print(response.choices[0].message.content)
+   
+        return response.choices[0].message.content
+
+    elif model in ["gpt-3.5-turbo-16k", "gpt-3.5-turbo", "gpt-4-1106-preview", "gpt-4-0125-preview", "gpt-4",
+                 "gpt-4-32k", "gpt-4-turbo", "gpt-4o-2024-05-13"]:
 
         client = OpenAI(api_key=api_key, base_url=base_url)
         chat_completion = client.chat.completions.create(
             messages=messages,
             model=model,  # "gpt-3.5-turbo-16k",  # "gpt-3.5-turbo", # gpt-4-1106-preview
             temperature=temperature,
-            max_tokens=max_tokens
+            max_tokens=max_tokens,
+            # response_format = {"type":"json_object"} if is_json==True else {"type":"text"}
         )
 
         return chat_completion.choices[0].message.content

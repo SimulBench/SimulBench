@@ -7,21 +7,19 @@ import re
 import time
 import os
 from utils import *
-from prompts import EVAL_PROMPT_SCORING_REF, EVAL_RPOMPT_PAIRWISE, EVAL_SYSTEM_RPOMPT, EVAL_PROMPT_SCORING
+from prompts import EVAL_RPOMPT_PAIRWISE, EVAL_SYSTEM_RPOMPT, EVAL_PROMPT_SCORING
 import random
 
 
-def model_scoring(target_model, ref_model, output_dir, judger_args, mode, filtered_path=None, filter_flag=None,
-                  utt_num=100):
-    # test_samples = load_test_cases(test_file_path)
-    if filtered_path != None:
-        filtered_dirs = json.load(open(filtered_path, "r"))
+def model_scoring(test_file_path, subset, target_model, ref_model, output_dir, judger_args, mode):
 
-    if filter_flag == "keep":
-        sample_dirs = filtered_dirs
-    else:
-        sample_dirs = os.listdir(output_dir)
-        sample_dirs = sorted(sample_dirs)
+    sample_dirs = []
+    test_samples = load_test_cases(test_file_path, subset)
+    for test_sample in test_samples:
+        sample_dirs.append(test_sample["id"]+"_"+test_sample["source_id"])
+
+    # sample_dirs = os.listdir(output_dir)
+    # sample_dirs = sorted(sample_dirs)
 
     one_score_pattern = re.compile("\[\[(\d+\.?\d*)\]\]")
     one_score_pattern_backup = re.compile("\[(\d+\.?\d*)\]")
@@ -29,29 +27,22 @@ def model_scoring(target_model, ref_model, output_dir, judger_args, mode, filter
 
     for i, sample_dir in enumerate(sample_dirs):
 
-        if filter_flag == "remove":
-            if sample_dir in filtered_dirs:
-                continue
-        print(sample_dir)
-
         # load dialogues
         target_file = os.path.join(output_dir, sample_dir, target_model + ".json")
         target_file = json.load(open(target_file, "r"))
         simulation = target_file["act"]
-        target_dialogue_list = target_file["dialogue"][:utt_num]
-        target_dialogue = convert_dialogue_list_to_string(target_dialogue_list,
-                                                          role_dict={"user": "User", "assistant": "Assistant"})
+        dialogue_history = target_file["dialogue_history"]
+        target_response = target_file["response"]
+        # target_dialogue = make_up_dialogue(dialogue_history)
 
-        ref_dialogue_list = None
-        ref_dialogue = None
+        # ref_dialogue_list = None
+        ref_response = None
         if mode == "scoring_ref":
             ref_file = os.path.join(output_dir, sample_dir, ref_model + ".json")
-            ref_dialogue_list = json.load(open(ref_file, "r"))["dialogue"]
-            ref_dialogue = convert_dialogue_list_to_string(ref_dialogue_list,
-                                                           role_dict={"user": "User", "assistant": "Assistant"})
+            ref_file = json.load(open(ref_file, "r"))
+            ref_response = ref_file["response"]
 
-        output_file_name = os.path.join(output_dir, sample_dir, mode + "_" + target_model + "_" + str(
-            len(target_dialogue_list) // 2) + "-gpt4.json")
+        output_file_name = os.path.join(output_dir, sample_dir, mode + "_" + target_model + ".json")
         if os.path.exists(output_file_name):
             print("already finished")
             continue
@@ -64,17 +55,18 @@ def model_scoring(target_model, ref_model, output_dir, judger_args, mode, filter
             messages.append({"role": "system", "content": EVAL_SYSTEM_RPOMPT})
             messages.append({"role": "user", "content": EVAL_PROMPT_SCORING.format(
                 SIMULATION=simulation,
-                DIALOGUE=target_dialogue
+                DIALOGUE=make_up_dialogue(dialogue_history),
+                RESPONSE=json.dumps({"AI": target_response["content"]}, indent=2)
             )})
-        else:
+        # else:
 
-            messages = []
-            messages.append({"role": "system", "content": EVAL_SYSTEM_RPOMPT})
-            messages.append({"role": "user", "content": EVAL_PROMPT_SCORING_REF.format(
-                SIMULATION=simulation,
-                REFERENCE=ref_dialogue,
-                DIALOGUE=target_dialogue
-            )})
+        #     messages = []
+        #     messages.append({"role": "system", "content": EVAL_SYSTEM_RPOMPT})
+        #     messages.append({"role": "user", "content": EVAL_PROMPT_SCORING_REF.format(
+        #         SIMULATION=simulation,
+        #         REFERENCE=ref_dialogue,
+        #         DIALOGUE=target_dialogue
+        #     )})
 
         # collect the rating
         rating = None
@@ -96,13 +88,20 @@ def model_scoring(target_model, ref_model, output_dir, judger_args, mode, filter
         ratings.append(float(rating))
 
         json.dump({
-            "id": sample_dir,
+            "id": target_file["id"],
+            "source_id": target_file["source_id"],
+            "act": target_file["act"],
+            "task_description": target_file["task_description"],
+            "type": target_file["type"],
+            "source_file": target_file["source_file"],
+            "turn_num": target_file["turn_num"],
+            "dialogue_history": target_file["dialogue_history"],
             "score": rating,
             "judgement": judgement,
             "target_model": target_model,
-            "dialogue": target_dialogue_list,
+            "target_response": target_response,
             "ref_model": ref_model,
-            "dialogue_ref": ref_dialogue_list,
+            "ref_response": ref_response,
             "messages": messages
         }, output_file, indent=4)
         output_file.close()
@@ -111,7 +110,7 @@ def model_scoring(target_model, ref_model, output_dir, judger_args, mode, filter
     return
 
 
-def pair_data_comparison(dialogue_1, dialogue_2, simulation, judger_args, direction_mode="12"):
+def pair_data_comparison(dialogue_history, response_1, response_2, simulation, judger_args, direction_mode="12"):
     winner_12, winner_21 = "error", "error"
     judgement_12, messages_12, judgement_21, messages_21 = None, None, None, None
 
@@ -122,8 +121,10 @@ def pair_data_comparison(dialogue_1, dialogue_2, simulation, judger_args, direct
         # model1, model2
         messages.append({"role": "user", "content": EVAL_RPOMPT_PAIRWISE.format(
             SIMULATION=simulation,
-            DIALOGUE_1=dialogue_1,
-            DIALOGUE_2=dialogue_2)})
+            DIALOGUE=make_up_dialogue(dialogue_history),
+            RESPONSE_1=json.dumps({"AI": response_1["content"]}, indent=2),
+            RESPONSE_2=json.dumps({"AI": response_2["content"]}, indent=2)
+            )})
         messages_12 = messages[:]
         print(num_tokens_from_messages(messages_12, "gpt-4"))
 
@@ -150,8 +151,10 @@ def pair_data_comparison(dialogue_1, dialogue_2, simulation, judger_args, direct
         # model2, model1
         messages.append({"role": "user", "content": EVAL_RPOMPT_PAIRWISE.format(
             SIMULATION=simulation,
-            DIALOGUE_1=dialogue_2,
-            DIALOGUE_2=dialogue_1)})
+            DIALOGUE=make_up_dialogue(dialogue_history),
+            RESPONSE_1=json.dumps({"AI": response_2["content"]}, indent=2),
+            RESPONSE_2=json.dumps({"AI": response_1["content"]}, indent=2)
+            )})
         messages_21 = messages[:]
         print(num_tokens_from_messages(messages_21, "gpt-4"))
 
@@ -174,24 +177,18 @@ def pair_data_comparison(dialogue_1, dialogue_2, simulation, judger_args, direct
     return winner_12, judgement_12, messages_12, winner_21, judgement_21, messages_21
 
 
-def model_comparison(target_model, ref_model, output_dir, judger_args, mode, filtered_path=None, filter_flag=None,
-                     utt_num=100, direction="random"):
-    if filtered_path != None:
-        filtered_dirs = json.load(open(filtered_path, "r"))
-
-    if filter_flag == "keep":
-        sample_dirs = filtered_dirs
-    else:
-        sample_dirs = os.listdir(output_dir)
-        sample_dirs = sorted(sample_dirs)
+def model_comparison(test_file_path, subset, target_model, ref_model, output_dir, judger_args, mode, direction="random"):
+    
+    sample_dirs = []
+    test_samples = load_test_cases(test_file_path, subset)
+    for test_sample in test_samples:
+        sample_dirs.append(test_sample["id"]+"_"+test_sample["source_id"])
 
     score = {"A": 0, "B": 0, "tie": 0}
     print(len(sample_dirs))
 
     for i, sample_dir in enumerate(sample_dirs):
-        if filter_flag == "remove":
-            if sample_dir in filtered_dirs:
-                continue
+        
         direction_mode = None
 
         if direction == "random":
@@ -206,27 +203,25 @@ def model_comparison(target_model, ref_model, output_dir, judger_args, mode, fil
 
         target_file = os.path.join(output_dir, sample_dir, target_model + ".json")
         target_file = json.load(open(target_file, "r"))
-        target_dialogue_list = target_file["dialogue"][:utt_num]
+        dialogue_history = target_file["dialogue_history"]
         simulation = target_file["act"]
-        target_dialogue = convert_dialogue_list_to_string(target_dialogue_list,
-                                                          role_dict={"user": "User", "assistant": "Assistant"})
+        target_response = target_file["response"]
 
         ref_file = os.path.join(output_dir, sample_dir, ref_model + ".json")
-        ref_dialogue_list = json.load(open(ref_file, "r"))["dialogue"][:utt_num]
-        ref_dialogue = convert_dialogue_list_to_string(ref_dialogue_list,
-                                                       role_dict={"user": "User", "assistant": "Assistant"})
+        ref_file = json.load(open(ref_file, "r"))
+        ref_response = ref_file["response"]
 
         output_file_name = os.path.join(output_dir, sample_dir,
-                                        mode + "_" + ref_model + "_vs_" + target_model + "_" + str(
-                                            len(target_dialogue_list) // 2) + ".json")
+                                        mode + "_" + ref_model + "_vs_" + target_model + ".json")
         if os.path.exists(output_file_name):
             print("already finished")
             continue
         output_file = open(output_file_name, "w", encoding="utf-8")
 
         winner_12, judgement_12, messages_12, winner_21, judgement_21, messages_21 = pair_data_comparison(
-            dialogue_1=ref_dialogue,
-            dialogue_2=target_dialogue,
+            dialogue_history=dialogue_history,
+            response_1=ref_response,
+            response_2=target_response,
             simulation=simulation,
             judger_args=judger_args,
             direction_mode=direction_mode
@@ -237,18 +232,26 @@ def model_comparison(target_model, ref_model, output_dir, judger_args, mode, fil
         if direction_mode == "12":
             final_winner = winner_12
             json.dump({
-                "id": sample_dir,
+                "id": target_file["id"],
+                "source_id": target_file["source_id"],
+                "act": target_file["act"],
+                "task_description": target_file["task_description"],
+                "type": target_file["type"],
+                "source_file": target_file["source_file"],
+                "turn_num": target_file["turn_num"],
+                "dialogue_history": target_file["dialogue_history"],
                 "final_winner": final_winner,
                 "target_model": target_model,
-                "dialogue": target_dialogue_list,
+                "target_response": target_response,
                 "ref_model": ref_model,
-                "dialogue_ref": ref_dialogue_list,
+                "ref_response": ref_response,
                 "winner": winner_12,
                 "judgement": judgement_12,
                 "messages": messages_12,
                 "direction_mode": direction_mode
             }, output_file, indent=4)
-
+         
+           
         elif direction_mode == "21":
             if winner_21 == "A":
                 final_winner = "B"
@@ -258,12 +261,19 @@ def model_comparison(target_model, ref_model, output_dir, judger_args, mode, fil
                 final_winner = "tie"
 
             json.dump({
-                "id": sample_dir,
+                "id": target_file["id"],
+                "source_id": target_file["source_id"],
+                "act": target_file["act"],
+                "task_description": target_file["task_description"],
+                "type": target_file["type"],
+                "source_file": target_file["source_file"],
+                "turn_num": target_file["turn_num"],
+                "dialogue_history": target_file["dialogue_history"],
                 "final_winner": final_winner,
                 "target_model": target_model,
-                "dialogue": target_dialogue_list,
+                "target_response": target_response,
                 "ref_model": ref_model,
-                "dialogue_ref": ref_dialogue_list,
+                "ref_response": ref_response,
                 "winner": winner_21,
                 "judgement": judgement_21,
                 "messages": messages_21,
@@ -280,17 +290,24 @@ def model_comparison(target_model, ref_model, output_dir, judger_args, mode, fil
                 final_winner = "tie"
 
             json.dump({
-                "id": sample_dir,
+                "id": target_file["id"],
+                "source_id": target_file["source_id"],
+                "act": target_file["act"],
+                "task_description": target_file["task_description"],
+                "type": target_file["type"],
+                "source_file": target_file["source_file"],
+                "turn_num": target_file["turn_num"],
+                "dialogue_history": target_file["dialogue_history"],
                 "final_winner": final_winner,
+                "target_model": target_model,
+                "target_response": target_response,
+                "ref_model": ref_model,
+                "ref_response": ref_response,
                 "winner_12": winner_12,
                 "judgement_12": judgement_12,
+                "messages_12": messages_12,
                 "winner_21": winner_21,
                 "judgement_21": judgement_21,
-                "target_model": target_model,
-                "dialogue": target_dialogue_list,
-                "ref_model": ref_model,
-                "dialogue_ref": ref_dialogue_list,
-                "messages_12": messages_12,
                 "messages_21": messages_21
             }, output_file, indent=4)
 
@@ -298,6 +315,7 @@ def model_comparison(target_model, ref_model, output_dir, judger_args, mode, fil
 
         output_file.close()
         time.sleep(3)
+        print(score)
     print(score)
     return
 
@@ -309,16 +327,17 @@ if __name__ == "__main__":
     # parser.add_argument("--model", type=str, default="gpt-4-1106-preview")
     # parser.add_argument("--temperature", type=float, default=0)
     # parser.add_argument("--max_tokens", type=int, default=2048)
-    parser.add_argument("--filtered_path", type=str, default=None, help="a specific group of sample ids")
-    parser.add_argument("--filter_flag", type=str, default=None, help="keep or remove the ids in filtered_path")
+
     parser.add_argument("--ref_model", type=str, default=None, help="the name of a model, which is the first model in pairwise comparison or the reference model in scoring with a reference.")
     parser.add_argument("--target_model", type=str, default="Llama-2-70b-chat-hf", help="the name of a model to be evaluated.")
-    parser.add_argument("--output_dir", type=str, default="", help="output directory")
-    parser.add_argument("--mode", type=str, help="scoring, scoring_ref, or pairwise")
+    
+    parser.add_argument("--test_file_path", type=str, default="SimulBench/SimulBench", help="simulation test scripts, load from huggingface/datasets by SimulBench/SimulBench")
+    parser.add_argument("--subset", type=str, default="all", help="all, hard, firstchan, subseqchan, lastonly, stateful, stateless")
+    parser.add_argument("--output_dir", type=str, default="./output_script", help="output directory")
+    
+    parser.add_argument("--mode", type=str, help="scoring, or pairwise")
     parser.add_argument("--direction", type=str, default="random",
                         help="a random direction or both directions for pairwise comparison")
-    parser.add_argument("--turn_num", type=int, default=10,
-                        help="the number of turns to be evaluated. utt_num = turn_num *2")
     args = parser.parse_args()
 
     random.seed(42)
@@ -329,9 +348,7 @@ if __name__ == "__main__":
                    "max_tokens": 1024}
 
     if args.mode == "scoring" or args.mode == "scoring_ref":
-        model_scoring(args.target_model, args.ref_model, args.output_dir, judger_args, args.mode,
-                      filtered_path=args.filtered_path, filter_flag=args.filter_flag, utt_num=args.turn_num * 2)
+        model_scoring(args.test_file_path, args.subset, args.target_model, args.ref_model, args.output_dir, judger_args, args.mode)
     elif args.mode == "pairwise":
-        model_comparison(args.target_model, args.ref_model, args.output_dir, judger_args, args.mode,
-                         filtered_path=args.filtered_path, filter_flag=args.filter_flag, utt_num=args.turn_num * 2,
+        model_comparison(args.test_file_path, args.subset, args.target_model, args.ref_model, args.output_dir, judger_args, args.mode,
                          direction=args.direction)

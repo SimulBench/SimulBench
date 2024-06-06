@@ -1,0 +1,11 @@
+python3 ./src/interactive_collection.py --character_api_key $API_KEY \
+    --character_model gpt-3.5-turbo \
+    --character_temperature 0.0 \
+    --character_max_tokens 1024 \
+    --user_api_key $API_KEY \
+    --user_model gpt-3.5-turbo \
+    --user_temperature 1.2 \
+    --user_max_tokens 300 \
+    --test_file_path ".SimulBench/SimulBench-tasks" \
+    --output_dir "./output" \
+    --turn_num 4
