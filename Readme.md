@@ -1,5 +1,5 @@
 <div align= "center">
-    <h1> SimulBench: Evaluating LLMs with Diverse Simulation Tasks
+    <h1> SimulBench: Evaluating LLMs with Creative Simulation Tasks
 </h1>
 </div>
 
