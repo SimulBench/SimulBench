@@ -1,5 +1,5 @@
 <div align= "center">
-    <h1> SimulBench: Evaluating LLMs with Creative Simulation Tasks
+    <h1> SimulBench: Evaluating Language Models with Creative Simulation Tasks
 </h1>
 </div>
 
@@ -128,7 +128,7 @@ All of LLMs' generations collected in this work including the GPT-4 Judge's outp
 If you find that our paper or code useful, please cite the paper as follows:
 ```latex
 @article{simulbench2024,
-      title={SimulBench: Evaluating LLMs with Creative Simulation Tasks}, 
+      title={SimulBench: Evaluating Language Models with Creative Simulation Tasks}, 
       author={Qi Jia, Xiang Yue, Tianyu Zheng, Jie Huang, and Bill Yuchen Lin},
       year={2024},
       eprint={},
