@@ -131,7 +131,7 @@ If you find that our paper or code useful, please cite the paper as follows:
       title={SimulBench: Evaluating Language Models with Creative Simulation Tasks}, 
       author={Qi Jia, Xiang Yue, Tianyu Zheng, Jie Huang, and Bill Yuchen Lin},
       year={2024},
-      eprint={},
+      eprint={https://arxiv.org/abs/2409.07641},
       archivePrefix={arXiv},
       primaryClass={cs.CL}
 }
